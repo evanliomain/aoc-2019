@@ -1,0 +1,17 @@
+{
+  "background": "#0f0f23",
+  "title": { "color": "#fff", "fontSize": 20 },
+  "style": {
+    "guide-label": { "fill": "#fff" },
+    "guide-title": { "fill": "#fff" }
+  },
+  "axis": {
+    "domainColor": "#cccccc",
+    "gridColor": "#cccccc",
+    "tickColor": "#cccccc",
+    "labelColor": "#cccccc"
+  },
+  "legend": {
+    "labelColor": "#cccccc"
+  }
+}

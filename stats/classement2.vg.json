@@ -1,0 +1,136 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 1000,
+  "height": 500,
+  "padding": 5,
+  "title": "Classement AoC 2018",
+  "data": [
+    {
+      "name": "source",
+      "values": []
+    },
+    {
+      "name": "table",
+      "source": "source",
+      "transform": [
+        { "type": "formula", "as": "x", "expr": "datum.date" },
+        { "type": "formula", "as": "y", "expr": "datum.score" },
+        { "type": "formula", "as": "key", "expr": "datum.name" },
+        { "type": "filter", "expr": "datum.date === scoreDate" },
+        {
+          "type": "collect",
+          "sort": { "field": "score", "order": "descending" }
+        }
+      ]
+    },
+    {
+      "name": "names",
+      "source": "source",
+      "transform": [
+        {
+          "type": "formula",
+          "as": "score",
+          "expr": "datum.date === scoreDate?datum.score:0"
+        },
+        {
+          "type": "collect",
+          "sort": { "field": "score", "order": "descending" }
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "range": "width",
+      "domain": { "data": "table", "field": "score" }
+    },
+    {
+      "name": "y",
+      "type": "point",
+      "range": "height",
+      "padding": 0.1,
+      "domain": { "data": "names", "field": "name" }
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": "category",
+      "domain": { "data": "source", "field": "name" }
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": { "data": "table" },
+      "encode": {
+        "enter": {
+          "x": { "value": 0 },
+          "yc": { "scale": "y", "field": "name" },
+          "fill": { "scale": "color", "field": "name" },
+          "width": { "scale": "x", "field": "score" },
+          "height": { "value": 5 }
+        },
+        "update": {
+          "interpolate": { "value": "monotone" },
+          "fillOpacity": { "value": 1 }
+        },
+        "hover": {
+          "fillOpacity": { "value": 0.5 }
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "from": { "data": "table" },
+      "encode": {
+        "enter": {
+          "shape": { "value": "square" },
+          "x": { "scale": "x", "field": "score" },
+          "yc": { "scale": "y", "field": "name" },
+          "fill": { "scale": "color", "field": "name" },
+          "size": { "value": 2000 }
+        }
+      }
+    },
+    {
+      "type": "image",
+      "from": { "data": "table" },
+      "encode": {
+        "enter": {
+          "xc": { "scale": "x", "field": "score" },
+          "yc": { "scale": "y", "field": "name" },
+          "fill": { "scale": "color", "field": "name" },
+          "width": { "value": 35 },
+          "height": { "value": 35 },
+          "aspect": { "value": true },
+          "url": { "field": "name" }
+        }
+      }
+    }
+  ],
+
+  "axes": [
+    {
+      "orient": "top",
+      "scale": "x",
+      "labelAngle": -45,
+      "labelAlign": "right",
+      "title": "score",
+      "titleAlign": "center",
+      "titleAnchor": "start"
+    },
+    {
+      "orient": "left",
+      "scale": "y",
+      "title": "players",
+      "titleAnchor": "start",
+      "titleAngle": { "value": 0 }
+    }
+  ],
+
+  "signals": [{ "name": "scoreDate", "value": "2018-12-12", "react": false }]
+}

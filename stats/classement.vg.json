@@ -1,0 +1,94 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 1000,
+  "height": 500,
+  "padding": 5,
+  "title": "Classement AoC 2018",
+  "data": [
+    {
+      "name": "source",
+      "values": []
+    },
+    {
+      "name": "table",
+      "source": "source",
+      "transform": [
+        { "type": "formula", "as": "x", "expr": "datum.date" },
+        { "type": "formula", "as": "y", "expr": "datum.score" },
+        { "type": "formula", "as": "key", "expr": "datum.name" },
+        { "type": "filter", "expr": "datum.date === scoreDate" },
+        {
+          "type": "collect",
+          "sort": { "field": "score", "order": "descending" }
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "range": "width",
+      "domain": { "data": "table", "field": "score" }
+    },
+    {
+      "name": "y",
+      "type": "band",
+      "range": "height",
+      "nice": true,
+      "zero": true,
+      "domain": { "data": "table", "field": "name" }
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": "category",
+      "domain": { "data": "source", "field": "name" }
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": { "data": "table" },
+      "encode": {
+        "enter": {
+          "x": { "value": 0 },
+          "y": { "scale": "y", "field": "name" },
+          "fill": { "scale": "color", "field": "name" },
+          "width": { "scale": "x", "field": "score" },
+          "height": { "scale": "y", "band": 1 }
+        },
+        "update": {
+          "interpolate": { "value": "monotone" },
+          "fillOpacity": { "value": 1 }
+        },
+        "hover": {
+          "fillOpacity": { "value": 0.5 }
+        }
+      }
+    }
+  ],
+
+  "axes": [
+    {
+      "orient": "top",
+      "scale": "x",
+      "labelAngle": -45,
+      "labelAlign": "right",
+      "title": "score",
+      "titleAlign": "center",
+      "titleAnchor": "start"
+    },
+    {
+      "orient": "left",
+      "scale": "y",
+      "title": "players",
+      "titleAnchor": "start",
+      "titleAngle": { "value": 0 }
+    }
+  ],
+
+  "signals": [{ "name": "scoreDate", "value": "2018-12-20", "react": false }]
+}

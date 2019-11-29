@@ -1,0 +1,15 @@
+module.exports.chunk = require('./chunk');
+module.exports.filterUntil = require('./filter-until');
+module.exports.lagCircular = require('./lag-circular');
+module.exports.lag = require('./lag');
+module.exports.loopDoWhile = require('./loop-do-while');
+module.exports.loopUntil = require('./loop-until');
+module.exports.mapMatrix = require('./map-matrix');
+module.exports.patternMatchingBy = require('./pattern-matching-by');
+module.exports.patternMatching = require('./pattern-matching');
+module.exports.patternMatchingWith = require('./pattern-matching-with');
+module.exports.printMatrix = require('./print-matrix');
+module.exports.replaceAt = require('./replace-at');
+module.exports.makeArray = require('./make-array');
+module.exports.then = require('./then');
+module.exports.then = require('./log');

@@ -1,0 +1,117 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 1000,
+  "height": 500,
+  "padding": 5,
+  "title": "Evolution des scores AoC 2018",
+  "data": [
+    {
+      "name": "source",
+      "values": []
+    },
+    {
+      "name": "table",
+      "source": "source",
+      "transform": [
+        { "type": "formula", "as": "x", "expr": "datum.date" },
+        { "type": "formula", "as": "y", "expr": "datum.score" },
+        { "type": "formula", "as": "key", "expr": "datum.name" }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "point",
+      "range": "width",
+      "domain": { "data": "table", "field": "x" }
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "range": "height",
+      "nice": true,
+      "zero": true,
+      "domain": { "data": "table", "field": "y" }
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": "category",
+      "domain": { "data": "table", "field": "key" }
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "from": {
+        "facet": {
+          "name": "series",
+          "data": "table",
+          "groupby": "key"
+        }
+      },
+      "marks": [
+        {
+          "type": "line",
+          "from": { "data": "series" },
+          "encode": {
+            "enter": {
+              "x": { "scale": "x", "field": "x" },
+              "y": { "scale": "y", "field": "y" },
+              "stroke": { "scale": "color", "field": "key" },
+              "strokeWidth": { "value": 3 },
+              "strokeCap": { "value": "round" }
+            },
+            "update": {
+              "interpolate": { "value": "monotone" },
+              "fillOpacity": { "value": 1 }
+            },
+            "hover": {
+              "fillOpacity": { "value": 0.5 }
+            }
+          }
+        }
+      ]
+    }
+  ],
+
+  "axes": [
+    {
+      "orient": "bottom",
+      "scale": "x",
+      "labelAngle": -45,
+      "labelAlign": "right",
+      "title": "temps"
+    },
+    { "orient": "left", "scale": "y", "title": "score" }
+  ],
+
+  "legends": [
+    {
+      "fill": "color",
+      "orient": "bottom",
+      "encode": {
+        "title": {
+          "update": {
+            "fontSize": { "value": 18 }
+          }
+        },
+        "labels": {
+          "update": {
+            "fontSize": { "value": 15 }
+          }
+        },
+        "symbols": {
+          "update": {
+            "shape": { "value": "circle" },
+            "size": { "value": 100 },
+            "stroke": { "value": "transparent" }
+          }
+        }
+      }
+    }
+  ]
+}

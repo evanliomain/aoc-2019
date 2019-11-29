@@ -1,0 +1,32 @@
+{
+  "name": "aoc-2019",
+  "version": "1.0.0",
+  "aocYear": "2019",
+  "license": "MIT",
+  "scripts": {
+    "gen": "plop init",
+    "stats": "node ./scripts/stats.js --",
+    "start": "node ./scripts/run.js --",
+    "submit": "node ./scripts/submit.js --",
+    "rns": "node ./scripts/run-and-submit.js --",
+    "checker": "node ./scripts/check.js --",
+    "test": "jest"
+  },
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "date-fns": "^2.7.0",
+    "request": "^2.88.0",
+    "taninsam": "^1.16.0"
+  },
+  "devDependencies": {
+    "gm": "^1.23.1",
+    "jest": "^24.9.0",
+    "node-html-parser": "^1.1.16",
+    "plop": "^2.5.3",
+    "prettier": "^1.18.2",
+    "request-promise": "^4.2.5",
+    "rimraf": "^3.0.0",
+    "svg2png": "^4.1.1",
+    "vega": "^5.8.0"
+  }
+}
