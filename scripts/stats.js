@@ -6,6 +6,7 @@ const T = require('taninsam');
 const format = require('date-fns/fp/format');
 const parse = require('date-fns/fp/parse');
 const addDays = require('date-fns/fp/addDays');
+const addMinutes = require('date-fns/fp/addMinutes');
 
 const tendancySpec = require('../stats/tendancy.vg.json');
 const classementSpec = require('../stats/classement2.vg.json');
@@ -23,11 +24,9 @@ const rimraf = require('rimraf');
 
 const leaderboard = require('../leaderboard.json');
 
-// Because of a bug in the day 6 puzzle that made it unsolvable
-// for some users until about two hours after unlock,
-// day 6 is worth no points.
-const daysWithNoPoint = [6];
-const nbDays = 60;
+// Because they can be bugs, some days may worth no points.
+const daysWithNoPoint = [];
+const nbDays = 90;
 
 async function main() {
   rimraf.sync('dist');
@@ -71,10 +70,10 @@ main().catch(() => {});
 
 function getDate(year) {
   return i =>
-    T.chain(`${year}-12-01T00:00:00.000`)
-      .chain(parse(new Date())("yyyy-MM-dd'T'HH:mm:ss.SSS"))
-      .chain(addDays(i))
-      .chain(format('yyyy-MM-dd'))
+    T.chain(`${year}-12-01T00:00:00.000-05`)
+      .chain(parse(new Date())("yyyy-MM-dd'T'HH:mm:ss.SSSx"))
+      .chain(addMinutes(i))
+      .chain(format("yyyy-MM-dd'T'HH:mm:ss"))
       .value();
 }
 

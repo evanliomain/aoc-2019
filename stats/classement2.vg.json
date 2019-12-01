@@ -3,7 +3,7 @@
   "width": 1000,
   "height": 500,
   "padding": 5,
-  "title": "Classement AoC 2018",
+  "title": "Classement AoC 2019",
   "data": [
     {
       "name": "source",
@@ -27,6 +27,11 @@
       "name": "names",
       "source": "source",
       "transform": [
+        {
+          "type": "formula",
+          "as": "fullname",
+          "expr": "datum.firstname + ' ' + datum.lastname"
+        },
         {
           "type": "formula",
           "as": "score",
@@ -53,6 +58,13 @@
       "range": "height",
       "padding": 0.1,
       "domain": { "data": "names", "field": "name" }
+    },
+    {
+      "name": "ylegend",
+      "type": "point",
+      "range": "height",
+      "padding": 0.1,
+      "domain": { "data": "names", "field": "fullname" }
     },
     {
       "name": "color",
@@ -110,6 +122,22 @@
           "url": { "field": "name" }
         }
       }
+    },
+    {
+      "type": "text",
+      "from": { "data": "table" },
+      "encode": {
+        "enter": {
+          "x": { "scale": "x", "field": "score" },
+          "dx": { "value": 45 },
+          "y": { "scale": "y", "field": "name" },
+          "text": { "field": "score" },
+          "fill": { "value": "white" },
+          "fontSize": { "value": 18 },
+          "align": { "value": "center" },
+          "baseline": { "value": "middle" }
+        }
+      }
     }
   ],
 
@@ -117,20 +145,21 @@
     {
       "orient": "top",
       "scale": "x",
-      "labelAngle": -45,
-      "labelAlign": "right",
+      "labelAlign": "center",
       "title": "score",
       "titleAlign": "center",
       "titleAnchor": "start"
     },
     {
       "orient": "left",
-      "scale": "y",
+      "scale": "ylegend",
       "title": "players",
       "titleAnchor": "start",
       "titleAngle": { "value": 0 }
     }
   ],
 
-  "signals": [{ "name": "scoreDate", "value": "2018-12-12", "react": false }]
+  "signals": [
+    { "name": "scoreDate", "value": "2019-12-01T06:20:00", "react": false }
+  ]
 }

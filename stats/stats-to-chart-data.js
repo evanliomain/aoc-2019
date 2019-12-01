@@ -2,6 +2,7 @@ const T = require('taninsam');
 const format = require('date-fns/fp/format');
 const parse = require('date-fns/fp/parse');
 const addDays = require('date-fns/fp/addDays');
+const addMinutes = require('date-fns/fp/addMinutes');
 const makeArray = require('../tools/make-array');
 const players = require('../playeurs.json');
 
@@ -90,11 +91,14 @@ function rawToResult(daysWithNoPoint) {
 }
 function computeDateScore(year, nbPlayers, members, result) {
   return i => {
-    const date = T.chain(`${year}-12-01T00:00:00.000`)
-      .chain(parse(new Date())("yyyy-MM-dd'T'HH:mm:ss.SSS"))
-      .chain(addDays(i))
+    const date = T.chain(`${year}-12-01T00:00:00.000-05`)
+      .chain(parse(new Date())("yyyy-MM-dd'T'HH:mm:ss.SSSx"))
+      // .chain(addDays(i))
+      .chain(addMinutes(i))
       .value();
-    const sDate = format('yyyy-MM-dd')(date);
+    console.log(date);
+
+    const sDate = format("yyyy-MM-dd'T'HH:mm:ss")(date);
     const time = T.chain(date)
       .chain(format('t'))
       .chain(t => parseInt(t, 10))

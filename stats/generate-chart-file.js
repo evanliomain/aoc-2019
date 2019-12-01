@@ -59,6 +59,6 @@ function viewToSvg() {
 }
 function svgToPng() {
   return async svg => {
-    return await svg2png(svg);
+    return await svg2png(svg, { width: 1200, height: 500 });
   };
 }
