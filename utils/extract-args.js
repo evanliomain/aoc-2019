@@ -56,6 +56,17 @@ function extractSubmit(argv) {
   return { day, level, answer };
 }
 
+function extractStats(argv) {
+  const [, , , d] = argv;
+
+  if (undefined === d) {
+    console.log('Usage: ' + chalk.bold('yarn stats ' + chalk.green('day')));
+    throw 0;
+  }
+  const day = d.padStart(2, '0');
+  return { day };
+}
+
 function extractRun(argv) {
   const [, , , d, level] = process.argv;
 
@@ -73,5 +84,6 @@ function extractRun(argv) {
 module.exports = {
   extractStart,
   extractSubmit,
-  extractRun
+  extractRun,
+  extractStats
 };

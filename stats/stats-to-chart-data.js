@@ -3,19 +3,24 @@ const format = require('date-fns/fp/format');
 const parse = require('date-fns/fp/parse');
 const addDays = require('date-fns/fp/addDays');
 const addMinutes = require('date-fns/fp/addMinutes');
+const addHours = require('date-fns/fp/addHours');
 const makeArray = require('../tools/make-array');
 const players = require('../playeurs.json');
+const log = require('../tools/log');
+
+const day = '01';
 
 module.exports = statsToChartData;
 
-function statsToChartData(year, nbDays, daysWithNoPoint) {
+function statsToChartData(year, numeroDay, daysWithNoPoint) {
   return stats =>
-    T.chain(nbDays)
+    T.chain(24)
       .chain(makeArray(x => x))
       .chain(
         T.map(
           computeDateScore(
             year,
+            numeroDay,
             getNbMembers(stats),
             getMembers(stats),
             rawToResult(daysWithNoPoint)(stats)
@@ -23,6 +28,14 @@ function statsToChartData(year, nbDays, daysWithNoPoint) {
         )
       )
       .chain(T.flat())
+      .chain(
+        T.map(d => {
+          if (!players[d.name]) {
+            console.log(`Configuration for ${d.name} is missing`);
+          }
+          return d;
+        })
+      )
       .chain(
         T.map(d => ({
           ...d,
@@ -89,12 +102,13 @@ function rawToResult(daysWithNoPoint) {
       .chain(T.sortBy(({ ts }) => ts))
       .value();
 }
-function computeDateScore(year, nbPlayers, members, result) {
+function computeDateScore(year, numeroDay, nbPlayers, members, result) {
   return i => {
-    const date = T.chain(`${year}-12-01T00:00:00.000-05`)
+    const date = T.chain(`${year}-12-${numeroDay}T00:00:00.000-05`)
       .chain(parse(new Date())("yyyy-MM-dd'T'HH:mm:ss.SSSx"))
       // .chain(addDays(i))
-      .chain(addMinutes(i))
+      // .chain(addMinutes(i))
+      .chain(addHours(i))
       .value();
     console.log(date);
 
@@ -157,5 +171,3 @@ function groupPlayer(groups) {
     {}
   );
 }
-
-// https://api.github.com/users/gregorybarale

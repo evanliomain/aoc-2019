@@ -9,12 +9,19 @@ const svg2png = require('svg2png');
 
 module.exports = generateChartFile;
 
-function generateChartFile(chartSpec, chartName, signals = []) {
+function generateChartFile(
+  chartSpec,
+  { chartName, width, height },
+  signals = []
+) {
+  chartSpec.width = width;
+  chartSpec.height = height;
+
   return async source =>
     T.chain(source)
       .chain(generateVegaChart(chartSpec, signals))
       .chain(viewToSvg())
-      .chain(then(svgToPng()))
+      .chain(then(svgToPng({ width, height })))
       .chain(then(writeFile(`dist/${chartName}.png`)))
       .value();
 }
@@ -57,8 +64,8 @@ function viewToSvg() {
     );
   };
 }
-function svgToPng() {
+function svgToPng({ width, height }) {
   return async svg => {
-    return await svg2png(svg, { width: 1200, height: 500 });
+    return await svg2png(svg, { width: width + 200, height });
   };
 }
