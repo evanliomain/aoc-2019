@@ -2,12 +2,27 @@ const T = require('taninsam');
 
 module.exports = { runInstruction, parseOpcode, execute };
 
-function execute(program, input) {
-  return T.chain(program)
-    .chain(program => ({ program, instructionPointer: 0, input, halt: false }))
-    .chain(T.loopWhile(({ halt }) => !halt, runInstruction))
-    .chain(({ output }) => output)
-    .value();
+function execute(program, input, ip = 0) {
+  const inputs = T.isArray(input) ? input : [input];
+
+  return (
+    T.chain(program)
+      .chain(program => ({
+        program: program.slice(),
+        instructionPointer: ip,
+        input: inputs,
+        halt: false
+      }))
+      .chain(
+        T.loopWhile(
+          ({ halt, output }) => !halt && T.isUndefined(output),
+          runInstruction
+        )
+      )
+      // TODO: impact other code to extract output
+      // .chain(({ output }) => output)
+      .value()
+  );
 }
 
 function runInstruction({ program, instructionPointer, input, output }) {
@@ -44,9 +59,10 @@ function runInstruction({ program, instructionPointer, input, output }) {
     instructionPointer += 4;
   }
   if (3 === opcode) {
-    program[program[instructionPointer + 1]] = input;
+    const inn = input.shift();
+    program[program[instructionPointer + 1]] = inn;
     instructionPointer += 2;
-    // console.log('inputs', input);
+    // console.log('inputs', inn);
   }
   if (4 === opcode) {
     newOutput = program[program[instructionPointer + 1]];
@@ -66,6 +82,7 @@ function runInstruction({ program, instructionPointer, input, output }) {
     } else {
       instructionPointer = v2;
     }
+    // console.log('j true', v1, v2);
   }
   if (6 === opcode) {
     const [pm1, pm2] = parametersMode;
@@ -80,6 +97,7 @@ function runInstruction({ program, instructionPointer, input, output }) {
     } else {
       instructionPointer += 3;
     }
+    // console.log('j false', v1, v2);
   }
   if (7 === opcode) {
     const [pm1, pm2] = parametersMode;
@@ -92,6 +110,7 @@ function runInstruction({ program, instructionPointer, input, output }) {
 
     program[program[instructionPointer + 3]] = v1 < v2 ? 1 : 0;
     instructionPointer += 4;
+    // console.log(' < ', v1, v2);
   }
   if (8 === opcode) {
     const [pm1, pm2] = parametersMode;
@@ -104,15 +123,18 @@ function runInstruction({ program, instructionPointer, input, output }) {
 
     program[program[instructionPointer + 3]] = v1 === v2 ? 1 : 0;
     instructionPointer += 4;
+    // console.log('===', v1, v2);
   }
 
   if (99 === opcode) {
     halt = true;
+    // console.log('halt');
   }
 
   return {
     program,
     instructionPointer,
+    input,
     output: newOutput,
     halt
   };
