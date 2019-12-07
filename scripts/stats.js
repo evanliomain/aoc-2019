@@ -13,7 +13,10 @@ const tendancySpec = require('../stats/tendancy.vg.json');
 const classementSpec = require('../stats/classement2.vg.json');
 const generateChartFile = require('../stats/generate-chart-file');
 const getData = require('../stats/get-data');
-const statsToChartData = require('../stats/stats-to-chart-data');
+const {
+  statsToChartData,
+  rawToResult
+} = require('../stats/stats-to-chart-data');
 const writeFile = require('../stats/write-file');
 const then = require('../tools/then');
 const log = require('../tools/log');
@@ -35,7 +38,6 @@ const height = 1200;
 async function main() {
   rimraf.sync('dist');
   fs.mkdirSync('dist/classement', { recursive: true });
-
   // Extract arguments
   const { day } = extractStats(process.argv);
 
@@ -78,6 +80,12 @@ async function main() {
       chalk.blue(`dist/classement-${year}-${day}.gif`)
   );
 
+  /*
+  const result = rawToResult(daysWithNoPoint)(data);
+  await writeFile(`dist/data-result-${year}-${day}-${leaderboard}.json`)(
+    JSON.stringify(result, 2)
+  );
+*/
   console.log(chalk.green('Charts generated'));
 }
 

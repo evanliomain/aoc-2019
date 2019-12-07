@@ -1,5 +1,5 @@
-const { execute } = require('./tools');
+const { execute } = require('../../intcode-computer');
 
 module.exports = function(program) {
-  return execute(program, 5);
+  return execute(program, 5).output;
 };

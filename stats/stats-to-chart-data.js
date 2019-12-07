@@ -8,9 +8,7 @@ const makeArray = require('../tools/make-array');
 const players = require('../playeurs.json');
 const log = require('../tools/log');
 
-const day = '01';
-
-module.exports = statsToChartData;
+module.exports = { statsToChartData, rawToResult };
 
 function statsToChartData(year, numeroDay, daysWithNoPoint) {
   return stats =>
@@ -71,6 +69,7 @@ function rawToResult(daysWithNoPoint) {
             .chain(
               T.map(([day, completion_level]) => ({
                 id: member.id,
+                name: member.name,
                 day: parseInt(day, 10),
                 level1_ts: !T.isNil(completion_level[1])
                   ? parseInt(completion_level[1].get_star_ts, 10)
@@ -86,13 +85,13 @@ function rawToResult(daysWithNoPoint) {
       .chain(T.flat())
       .chain(T.flat())
       .chain(
-        T.map(({ id, day, level1_ts, level2_ts }) => {
+        T.map(({ id, name, day, level1_ts, level2_ts }) => {
           const stat = [];
           if (0 !== level1_ts) {
-            stat.push({ id, day, level: 1, ts: level1_ts });
+            stat.push({ id, name, day, level: 1, ts: level1_ts });
           }
           if (0 !== level2_ts) {
-            stat.push({ id, day, level: 2, ts: level2_ts });
+            stat.push({ id, name, day, level: 2, ts: level2_ts });
           }
           return stat;
         })
@@ -100,6 +99,27 @@ function rawToResult(daysWithNoPoint) {
       .chain(T.flat())
       .chain(T.filter(({ day }) => !daysWithNoPoint.includes(day)))
       .chain(T.sortBy(({ ts }) => ts))
+      .chain(
+        T.map(d => {
+          // console.log(
+          //   format("yyyy-MM-dd'T'HH:mm:ss")(parse(new Date())('t')(d.ts))
+          // );
+
+          const date = T.chain(d.ts)
+            .chain(parse(new Date())('t'))
+            .value();
+          // .chain(format("yyyy-MM-dd'T'HH:mm:ss"))
+          return {
+            ...d,
+            date: format("yyyy-MM-dd'T'HH:mm:ss")(date),
+            year: parseInt(format('yyyy')(date), 10),
+            month: parseInt(format('MM')(date), 10),
+            day: parseInt(format('dd')(date), 10),
+            hour: parseInt(format('HH')(date), 10)
+          };
+        })
+      )
+      .chain(addPlayerInfo())
       .value();
 }
 function computeDateScore(year, numeroDay, nbPlayers, members, result) {
@@ -170,4 +190,24 @@ function groupPlayer(groups) {
       }, acc),
     {}
   );
+}
+
+function addPlayerInfo() {
+  return raw =>
+    T.chain(raw)
+      .chain(
+        T.map(d => {
+          if (!players[d.name]) {
+            console.log(`Configuration for ${d.name} is missing`);
+          }
+          return d;
+        })
+      )
+      .chain(
+        T.map(d => ({
+          ...d,
+          ...players[d.name]
+        }))
+      )
+      .value();
 }

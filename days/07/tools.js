@@ -1,5 +1,5 @@
 const T = require('taninsam');
-const { execute } = require('../05/tools');
+const { execute } = require('../../intcode-computer');
 
 module.exports = {
   serie,
@@ -7,32 +7,39 @@ module.exports = {
   feedBackLoop
 };
 
-function serie(input) {
+function serie(program) {
+  const amplifier = phase => x => execute(program, [phase, x]).output;
+
   return ([i1, i2, i3, i4, i5]) =>
-    T.chain(input)
-      .chain(() => execute(input, [i1, 0]).output)
-      .chain(r => execute(input, [i2, r]).output)
-      .chain(r => execute(input, [i3, r]).output)
-      .chain(r => execute(input, [i4, r]).output)
-      .chain(r => execute(input, [i5, r]).output)
+    T.chain(0)
+      .chain(amplifier(i1))
+      .chain(amplifier(i2))
+      .chain(amplifier(i3))
+      .chain(amplifier(i4))
+      .chain(amplifier(i5))
       .value();
 }
 
 function feedBackLoop(mainProgram) {
   return ([i1, i2, i3, i4, i5]) => {
+    // Final output, initialize to 0
     let fo = 0;
+
+    // All amplifiers program
     let p1 = mainProgram.slice();
     let p2 = mainProgram.slice();
     let p3 = mainProgram.slice();
     let p4 = mainProgram.slice();
     let p5 = mainProgram.slice();
 
+    // All amplifiers instruction pointer
     let ip1 = 0;
     let ip2 = 0;
     let ip3 = 0;
     let ip4 = 0;
     let ip5 = 0;
 
+    // All amplifiers inputs
     let in1 = [i1];
     let in2 = [i2];
     let in3 = [i3];
@@ -91,7 +98,9 @@ function feedBackLoop(mainProgram) {
       ip5 = ipp5;
       in5 = [];
 
-      fo = o5;
+      if (!T.isUndefined(o5)) {
+        fo = o5;
+      }
 
       if (h5) {
         break;

@@ -5,24 +5,20 @@ module.exports = { runInstruction, parseOpcode, execute };
 function execute(program, input, ip = 0) {
   const inputs = T.isArray(input) ? input : [input];
 
-  return (
-    T.chain(program)
-      .chain(program => ({
-        program: program.slice(),
-        instructionPointer: ip,
-        input: inputs,
-        halt: false
-      }))
-      .chain(
-        T.loopWhile(
-          ({ halt, output }) => !halt && T.isUndefined(output),
-          runInstruction
-        )
+  return T.chain(program)
+    .chain(program => ({
+      program: program.slice(),
+      instructionPointer: ip,
+      input: inputs,
+      halt: false
+    }))
+    .chain(
+      T.loopWhile(
+        ({ halt, output }) => !halt && T.isUndefined(output),
+        runInstruction
       )
-      // TODO: impact other code to extract output
-      // .chain(({ output }) => output)
-      .value()
-  );
+    )
+    .value();
 }
 
 function runInstruction({ program, instructionPointer, input, output }) {
