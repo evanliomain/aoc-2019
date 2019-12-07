@@ -11,25 +11,27 @@ module.exports = generateChartFile;
 
 function generateChartFile(
   chartSpec,
-  { chartName, width, height },
+  { chartName, width, height, dwidth, config },
   signals = []
 ) {
   chartSpec.width = width;
   chartSpec.height = height;
 
+  const conf = T.isUndefined(config) ? aocChartConfig : config;
+
   return async source =>
     T.chain(source)
-      .chain(generateVegaChart(chartSpec, signals))
+      .chain(generateVegaChart(chartSpec, conf, signals))
       .chain(viewToSvg())
-      .chain(then(svgToPng({ width, height })))
+      .chain(then(svgToPng({ width, height, dwidth })))
       .chain(then(writeFile(`dist/${chartName}.png`)))
       .value();
 }
 
-function generateVegaChart(chartSpec, signals = []) {
+function generateVegaChart(chartSpec, conf, signals = []) {
   return chartSource =>
     T.chain(chartSpec)
-      .chain(specToRuntime)
+      .chain(specToRuntime(conf))
       .chain(createView)
       .chain(sourceData(chartSource))
       .chain(setSignals(signals))
@@ -37,8 +39,8 @@ function generateVegaChart(chartSpec, signals = []) {
       .value();
 }
 
-function specToRuntime(spec) {
-  return vega.parse(spec, aocChartConfig);
+function specToRuntime(conf) {
+  return spec => vega.parse(spec, conf);
 }
 function createView(runtime) {
   return new vega.View(runtime, { renderer: 'svg' });
@@ -64,8 +66,8 @@ function viewToSvg() {
     );
   };
 }
-function svgToPng({ width, height }) {
+function svgToPng({ width, height, dwidth }) {
   return async svg => {
-    return await svg2png(svg, { width: width + 200, height });
+    return await svg2png(svg, { width: width + dwidth, height });
   };
 }

@@ -1,0 +1,35 @@
+{
+  "background": "#ffffff",
+  "axis": {
+    "domainColor": "#cbcbcb",
+    "grid": true,
+    "gridColor": "#cbcbcb",
+    "gridWidth": 1,
+    "labelColor": "#000",
+    "labelFontSize": 20,
+    "titleColor": "#333",
+    "tickColor": "#cbcbcb",
+    "tickSize": 10,
+    "titleFontSize": 20,
+    "titlePadding": 10,
+    "labelPadding": 4
+  },
+  "axisBand": { "grid": false },
+  "legend": {
+    "labelColor": "#333",
+    "labelFontSize": 20,
+    "padding": 1,
+    "symbolSize": 30,
+    "symbolType": "square",
+    "titleColor": "#333",
+    "titleFontSize": 18,
+    "titlePadding": 10
+  },
+  "title": {
+    "anchor": "middle",
+    "fontSize": 30,
+    "fontWeight": 600,
+    "offset": 20,
+    "subtitleFontSize": 20
+  }
+}

@@ -11,6 +11,9 @@ const addHours = require('date-fns/fp/addHours');
 
 const tendancySpec = require('../stats/tendancy.vg.json');
 const classementSpec = require('../stats/classement2.vg.json');
+const hotHoursSpec = require('../stats/hot-hours.vg.json');
+const hotHoursConfig = require('../stats/hot-hours.config.json');
+
 const generateChartFile = require('../stats/generate-chart-file');
 const getData = require('../stats/get-data');
 const {
@@ -50,6 +53,7 @@ async function main() {
       ].join(' - ')
   );
   const data = await getData({ year, leaderboard });
+
   console.log('Transform data');
   const chartData = statsToChartData(year, day, daysWithNoPoint)(data);
   await writeFile(`dist/data-${year}-${day}-${leaderboard}.json`)(
@@ -61,7 +65,8 @@ async function main() {
   await generateChartFile(tendancySpec, {
     chartName: `tendancy-${year}-${day}`,
     width,
-    height
+    height,
+    dwidth: -300
   })(chartData).then(
     log(path => 'Tendancy chart generated at ' + chalk.blue(path))
   );
@@ -80,12 +85,21 @@ async function main() {
       chalk.blue(`dist/classement-${year}-${day}.gif`)
   );
 
-  /*
+  // Generate hothours chart
   const result = rawToResult(daysWithNoPoint)(data);
   await writeFile(`dist/data-result-${year}-${day}-${leaderboard}.json`)(
     JSON.stringify(result, 2)
   );
-*/
+  await generateChartFile(hotHoursSpec, {
+    chartName: `hot-hours-${year}-${day}`,
+    width: 1000,
+    height: 300,
+    dwidth: -400,
+    config: hotHoursConfig
+  })(result).then(
+    log(path => 'Hot hours chart generated at ' + chalk.blue(path))
+  );
+
   console.log(chalk.green('Charts generated'));
 }
 
@@ -124,7 +138,8 @@ function generateClassment(year, chartData, numeroDay) {
       {
         chartName: `classement/classement-${date}`,
         width,
-        height
+        height,
+        dwidth: 200
       },
       [
         {
