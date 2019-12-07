@@ -132,13 +132,13 @@ function generateClassment(year, chartData, numeroDay) {
   const toDate = getDate(year, numeroDay);
   return async i => {
     const date = toDate(i);
-    classementSpec.title = `Classement AoC ${date}`;
+    classementSpec.title = { text: `Classement AoC ${year}`, subtitle: date };
     await generateChartFile(
       classementSpec,
       {
         chartName: `classement/classement-${date}`,
-        width,
-        height,
+        width: 1000,
+        height: 1200,
         dwidth: 200
       },
       [

@@ -1,6 +1,12 @@
 {
   "background": "#0f0f23",
-  "title": { "color": "#fff", "fontSize": 20 },
+  "title": {
+    "color": "#fff",
+    "fontSize": 40,
+    "subtitleFontSize": 25,
+    "subtitleColor": "#fff",
+    "offset": 60
+  },
   "style": {
     "guide-label": { "fill": "#fff" },
     "guide-title": { "fill": "#fff" }
@@ -9,9 +15,8 @@
     "domainColor": "#cccccc",
     "gridColor": "#cccccc",
     "tickColor": "#cccccc",
-    "labelColor": "#cccccc"
+    "labelColor": "#cccccc",
+    "titleFontSize": 20
   },
-  "legend": {
-    "labelColor": "#cccccc"
-  }
+  "legend": { "labelColor": "#cccccc" }
 }
