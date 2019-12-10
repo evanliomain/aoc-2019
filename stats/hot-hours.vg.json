@@ -17,7 +17,7 @@
       "transform": [
         {
           "type": "aggregate",
-          "groupby": ["hour", "day"],
+          "groupby": ["date_hour", "date_day"],
           "ops": ["count"],
           "as": ["nb"]
         }
@@ -64,7 +64,7 @@
       "name": "y",
       "type": "band",
       "range": "height",
-      "domain": { "fields": [{ "data": "table", "field": "day" }] }
+      "domain": { "fields": [{ "data": "table", "field": "date_day" }] }
     },
     {
       "name": "color",
@@ -80,8 +80,8 @@
       "from": { "data": "table" },
       "encode": {
         "enter": {
-          "x": { "scale": "x", "field": "hour" },
-          "y": { "scale": "y", "field": "day" },
+          "x": { "scale": "x", "field": "date_hour" },
+          "y": { "scale": "y", "field": "date_day" },
           "width": { "scale": "x", "band": 1 },
           "height": { "scale": "y", "band": 1 },
           "fill": { "scale": "color", "field": "nb" }

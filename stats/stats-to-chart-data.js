@@ -112,10 +112,10 @@ function rawToResult(daysWithNoPoint) {
           return {
             ...d,
             date: format("yyyy-MM-dd'T'HH:mm:ss")(date),
-            year: parseInt(format('yyyy')(date), 10),
-            month: parseInt(format('MM')(date), 10),
-            day: parseInt(format('dd')(date), 10),
-            hour: parseInt(format('HH')(date), 10)
+            date_year: parseInt(format('yyyy')(date), 10),
+            date_month: parseInt(format('MM')(date), 10),
+            date_day: parseInt(format('dd')(date), 10),
+            date_hour: parseInt(format('HH')(date), 10)
           };
         })
       )
