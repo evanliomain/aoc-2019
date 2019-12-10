@@ -12,4 +12,5 @@ module.exports.printMatrix = require('./print-matrix');
 module.exports.replaceAt = require('./replace-at');
 module.exports.makeArray = require('./make-array');
 module.exports.then = require('./then');
-module.exports.then = require('./log');
+module.exports.log = require('./log');
+module.exports.at = require('./at');
