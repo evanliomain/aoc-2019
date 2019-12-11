@@ -43,7 +43,12 @@ describe('execute', () => {
       99
     ];
     expect(
-      execute(copyProgram, 1, 0, { debug: false, runUntilHalt: true }).output
+      execute(
+        copyProgram,
+        1,
+        { instructionPointer: 0, relativeBase: 0 },
+        { debug: false, runUntilHalt: true }
+      ).output
     ).toEqual(copyProgram);
   });
 
@@ -85,7 +90,9 @@ describe('execute', () => {
     `);
   });
   it('opcode 4', () => {
-    expect(execute([1, 0, 4, 0, 99], 1, 2)).toMatchInlineSnapshot(`
+    expect(
+      execute([1, 0, 4, 0, 99], 1, { instructionPointer: 2, relativeBase: 0 })
+    ).toMatchInlineSnapshot(`
       Object {
         "halt": false,
         "input": Array [
@@ -124,7 +131,9 @@ describe('execute', () => {
     `);
   });
   it('opcode 99', () => {
-    expect(execute([1, 0, 4, 0, 99], 1, 4)).toMatchInlineSnapshot(`
+    expect(
+      execute([1, 0, 4, 0, 99], 1, { instructionPointer: 4, relativeBase: 0 })
+    ).toMatchInlineSnapshot(`
       Object {
         "halt": true,
         "input": Array [

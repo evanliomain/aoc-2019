@@ -8,18 +8,28 @@ module.exports = { execute };
 function execute(
   program,
   input,
-  ip = 0,
+  { instructionPointer, relativeBase } = {
+    instructionPointer: 0,
+    relativeBase: 0
+  },
   executionOptions = { debug: false, runUntilHalt: false }
 ) {
   const inputs = T.isArray(input) ? input : [input];
   const outputs = [];
 
+  if (T.isNil(instructionPointer)) {
+    instructionPointer = 0;
+  }
+  if (T.isNil(relativeBase)) {
+    relativeBase = 0;
+  }
+
   return T.chain(program)
     .chain(p => p.slice())
     .chain(p => ({
       program: p,
-      instructionPointer: ip,
-      relativeBase: 0,
+      instructionPointer,
+      relativeBase,
       input: inputs,
       halt: false
     }))

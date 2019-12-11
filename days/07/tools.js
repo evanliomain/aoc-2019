@@ -51,7 +51,7 @@ function feedBackLoop(mainProgram) {
       const { output: o1, program: pp1, instructionPointer: ipp1 } = execute(
         p1,
         in1,
-        ip1
+        { instructionPointer: ip1 }
       );
       p1 = pp1;
       ip1 = ipp1;
@@ -61,7 +61,7 @@ function feedBackLoop(mainProgram) {
       const { output: o2, program: pp2, instructionPointer: ipp2 } = execute(
         p2,
         in2,
-        ip2
+        { instructionPointer: ip2 }
       );
       p2 = pp2;
       ip2 = ipp2;
@@ -71,7 +71,7 @@ function feedBackLoop(mainProgram) {
       const { output: o3, program: pp3, instructionPointer: ipp3 } = execute(
         p3,
         in3,
-        ip3
+        { instructionPointer: ip3 }
       );
       p3 = pp3;
       ip3 = ipp3;
@@ -81,7 +81,7 @@ function feedBackLoop(mainProgram) {
       const { output: o4, program: pp4, instructionPointer: ipp4 } = execute(
         p4,
         in4,
-        ip4
+        { instructionPointer: ip4 }
       );
       p4 = pp4;
       ip4 = ipp4;
@@ -93,7 +93,7 @@ function feedBackLoop(mainProgram) {
         halt: h5,
         program: pp5,
         instructionPointer: ipp5
-      } = execute(p5, in5, ip5);
+      } = execute(p5, in5, { instructionPointer: ip5 });
       p5 = pp5;
       ip5 = ipp5;
       in5 = [];
