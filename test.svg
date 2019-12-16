@@ -1,0 +1,42 @@
+<svg viewBox="0 0 10 10">
+
+<rect width="10" height="10" x="0" y="0" fill="black"/>
+
+
+<rect width="1" height="1" x="0" y="0" fill="blue"/>
+<rect width="1" height="1" x="1" y="0" fill="blue"/>
+<rect width="1" height="1" x="2" y="0" fill="blue"/>
+
+<rect width="1" height="1" x="4" y="0" fill="blue"/>
+<rect width="1" height="1" x="5" y="0" fill="blue"/>
+<rect width="1" height="1" x="6" y="0" fill="blue"/>
+<rect width="1" height="1" x="7" y="0" fill="blue"/>
+<rect width="1" height="1" x="8" y="0" fill="blue"/>
+<rect width="1" height="1" x="9" y="0" fill="blue"/>
+
+
+<rect width="1" height="1" x="0" y="1" fill="red" stroke="red"  stroke-width="0.01"/>
+<rect width="1" height="1" x="1" y="1" fill="red" stroke="red"  stroke-width="0.01"/>
+<rect width="1" height="1" x="2" y="1" fill="red" stroke="red"  stroke-width="0.01"/>
+
+
+<rect width="1" height="1" x="5" y="1" fill="red"/>
+<rect width="1" height="1" x="6" y="1" fill="red"/>
+<rect width="1" height="1" x="7" y="1" fill="red"/>
+<rect width="1" height="1" x="8" y="1" fill="red"/>
+<rect width="1" height="1" x="9" y="1" fill="red"/>
+
+<rect width="1" height="1" x="0" y="2" fill="blue"/>
+<rect width="1" height="1" x="1" y="2" fill="blue"/>
+<rect width="1" height="1" x="2" y="2" fill="blue"/>
+
+<circle cx="3.5" cy="2.5" r="0.5" fill="green"/>
+
+<rect width="1" height="1" x="4" y="2" fill="blue"/>
+<rect width="1" height="1" x="5" y="2" fill="blue"/>
+<rect width="1" height="1" x="6" y="2" fill="blue"/>
+<rect width="1" height="1" x="7" y="2" fill="blue"/>
+<rect width="1" height="1" x="8" y="2" fill="blue"/>
+<rect width="1" height="1" x="9" y="2" fill="blue"/>
+
+</svg>

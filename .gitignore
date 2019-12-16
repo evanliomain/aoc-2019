@@ -64,6 +64,8 @@ typings/
 
 dist
 
+output
+
 # My personal data
 session.json
 leaderboard.json

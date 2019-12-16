@@ -54,7 +54,7 @@ async function runAndSubmit() {
       return;
     }
     try {
-      puzzleResult = solve(day, level, input);
+      puzzleResult = await solve(day, level, input);
     } catch (e) {
       console.log(e);
       return;

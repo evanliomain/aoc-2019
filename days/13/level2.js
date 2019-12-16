@@ -4,17 +4,15 @@ const {
   printMatrix,
   patternMatching,
   chunk,
-  replaceAt
+  replaceAt,
+  printMatrixToFile
 } = require('../../tools');
 
 const { execute } = require('../../intcode-computer');
 
 const execOptions = { debug: false, runUntilHalt: true };
 
-
 // TODO: A faire
-
-
 
 module.exports = function(program) {
   return (
@@ -99,7 +97,15 @@ function getArcadeScreen(output) {
 }
 
 function printArcadeScreen({ score, screen }) {
-  return `Score: ${chalk.green(score)}\n` + print(screen);
+  return printMatrixToFile(
+    patternMatching(
+      [1, () => 'purple'],
+      [2, () => 'green'],
+      [3, () => 'yellow'],
+      [4, () => ({ shape: 'circle', fill: 'red' })]
+    )
+  )('arcade-screen', 20)(screen);
+  // return `Score: ${chalk.green(score)}\n` + print(screen);
 }
 
 function print(matrix) {

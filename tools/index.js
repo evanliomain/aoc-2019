@@ -16,3 +16,4 @@ module.exports.log = require('./log');
 module.exports.at = require('./at');
 module.exports.lcm = require('./lcm');
 module.exports.hcf = require('./hcf');
+module.exports.printMatrixToFile = require('./print-matrix-to-file');

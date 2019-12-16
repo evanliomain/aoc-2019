@@ -39,7 +39,9 @@ async function main() {
     }
     return;
   }
-  return solve(day, level, input);
+  return await solve(day, level, input);
 }
 
-main().catch(() => {});
+main().catch(e => {
+  console.error(e);
+});

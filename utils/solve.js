@@ -1,6 +1,6 @@
 const chalk = require('chalk');
 
-function solve(day, level, input) {
+async function solve(day, level, input) {
   // Get solve function
   const solve = require(`../days/${day}/level${level}`);
 
@@ -14,7 +14,7 @@ function solve(day, level, input) {
   }
   console.time('solving in');
   try {
-    result = solve(parser(input));
+    result = await solve(parser(input));
   } catch (e) {
     console.log(chalk.bold.red(e));
     throw e;
