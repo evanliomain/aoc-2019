@@ -1,9 +1,9 @@
-<svg viewBox="0 0 10 10">
+<svg viewBox="0 0 10 10" width="500" height="500">
 
 <rect width="10" height="10" x="0" y="0" fill="black"/>
 
 
-<rect width="1" height="1" x="0" y="0" fill="blue"/>
+<rect width="1" height="1" x="0" y="0" fill="blue" stroke="black" stroke-width="0.05"/>
 <rect width="1" height="1" x="1" y="0" fill="blue"/>
 <rect width="1" height="1" x="2" y="0" fill="blue"/>
 
@@ -24,13 +24,14 @@
 <rect width="1" height="1" x="6" y="1" fill="red"/>
 <rect width="1" height="1" x="7" y="1" fill="red"/>
 <rect width="1" height="1" x="8" y="1" fill="red"/>
-<rect width="1" height="1" x="9" y="1" fill="red"/>
+<rect width="1" height="1" x="9" y="1" fill="brown"/>
 
 <rect width="1" height="1" x="0" y="2" fill="blue"/>
 <rect width="1" height="1" x="1" y="2" fill="blue"/>
 <rect width="1" height="1" x="2" y="2" fill="blue"/>
 
-<circle cx="3.5" cy="2.5" r="0.5" fill="green"/>
+<circle cx="3.5" cy="2.5" r="0.5" fill="green" stroke="yellow" stroke-width="0.05"
+     transform="translate(0.1, 0.1) scale(0.8)"/>
 
 <rect width="1" height="1" x="4" y="2" fill="blue"/>
 <rect width="1" height="1" x="5" y="2" fill="blue"/>
@@ -38,5 +39,10 @@
 <rect width="1" height="1" x="7" y="2" fill="blue"/>
 <rect width="1" height="1" x="8" y="2" fill="blue"/>
 <rect width="1" height="1" x="9" y="2" fill="blue"/>
+
+<path d="M1,0.5 l-1,0.5 v-1z"
+     fill="green"
+     transform="scale(0.8) translate(0.1, 0.1)"
+     />
 
 </svg>
