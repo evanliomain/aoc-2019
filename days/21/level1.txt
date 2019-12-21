@@ -1,0 +1,7 @@
+// !c * d * !a
+
+not c j
+and d j
+
+not a t
+or t j

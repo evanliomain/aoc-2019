@@ -1,0 +1,8 @@
+or a j
+and b j
+and c j
+not j j
+and d j
+or e t
+or h t
+and t j

@@ -19,3 +19,5 @@ module.exports.hcf = require('./hcf');
 module.exports.printMatrixToFile = require('./print-matrix-to-file');
 module.exports.makeMatrix = require('./make-matrix');
 module.exports.findAllMatrix = require('./find-all-matrix');
+module.exports.stringToAscii = require('./string-to-ascii');
+module.exports.asciiToString = require('./ascii-to-string');
