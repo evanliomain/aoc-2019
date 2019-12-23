@@ -3,7 +3,20 @@ const T = require('taninsam');
 
 const { parseOpcode } = require('./parse-opcode');
 
-module.exports = { runInstruction };
+const OPCODE = {
+  ADD: 1,
+  MULTIPLY: 2,
+  INPUT: 3,
+  OUTPUT: 4,
+  JUMP_TRUE: 5,
+  JUMP_FALSE: 6,
+  LESS: 7,
+  EQUAL: 8,
+  RELATIVE_BASE: 9,
+  HALT: 99
+};
+
+module.exports = { runInstruction, OPCODE };
 
 function runInstruction(debug = false) {
   return ({ program, instructionPointer, relativeBase, input, output }) => {
@@ -14,7 +27,7 @@ function runInstruction(debug = false) {
       program[instructionPointer]
     );
 
-    if (1 === opcode) {
+    if (OPCODE.ADD === opcode) {
       const [pm1, pm2, pm3] = parametersMode;
       const v1 = getValue(pm1, 1, {
         program,
@@ -42,7 +55,7 @@ function runInstruction(debug = false) {
       }
       instructionPointer += 4;
     }
-    if (2 === opcode) {
+    if (OPCODE.MULTIPLY === opcode) {
       const [pm1, pm2, pm3] = parametersMode;
       const v1 = getValue(pm1, 1, {
         program,
@@ -70,7 +83,7 @@ function runInstruction(debug = false) {
       }
       instructionPointer += 4;
     }
-    if (3 === opcode) {
+    if (OPCODE.INPUT === opcode) {
       const inn = input.shift();
       const [pm1] = parametersMode;
       const pos = getPosition(pm1, 1, {
@@ -89,7 +102,7 @@ function runInstruction(debug = false) {
         );
       }
     }
-    if (4 === opcode) {
+    if (OPCODE.OUTPUT === opcode) {
       const [pm1] = parametersMode;
       const v1 = getValue(pm1, 1, {
         program,
@@ -102,7 +115,7 @@ function runInstruction(debug = false) {
         console.log(`${chalk.cyan.bold('<<')} (${chalk.cyan(newOutput)})`);
       }
     }
-    if (5 === opcode) {
+    if (OPCODE.JUMP_TRUE === opcode) {
       const [pm1, pm2] = parametersMode;
       const v1 = getValue(pm1, 1, {
         program,
@@ -123,7 +136,7 @@ function runInstruction(debug = false) {
         }
       }
     }
-    if (6 === opcode) {
+    if (OPCODE.JUMP_FALSE === opcode) {
       const [pm1, pm2] = parametersMode;
       const v1 = getValue(pm1, 1, {
         program,
@@ -144,7 +157,7 @@ function runInstruction(debug = false) {
         instructionPointer += 3;
       }
     }
-    if (7 === opcode) {
+    if (OPCODE.LESS === opcode) {
       const [pm1, pm2, pm3] = parametersMode;
       const v1 = getValue(pm1, 1, {
         program,
@@ -169,7 +182,7 @@ function runInstruction(debug = false) {
         );
       }
     }
-    if (8 === opcode) {
+    if (OPCODE.EQUAL === opcode) {
       const [pm1, pm2, pm3] = parametersMode;
       const v1 = getValue(pm1, 1, {
         program,
@@ -195,7 +208,7 @@ function runInstruction(debug = false) {
         );
       }
     }
-    if (9 === opcode) {
+    if (OPCODE.RELATIVE_BASE === opcode) {
       const [pm1] = parametersMode;
       const v1 = getValue(pm1, 1, {
         program,
@@ -215,8 +228,7 @@ function runInstruction(debug = false) {
       }
       instructionPointer += 2;
     }
-
-    if (99 === opcode) {
+    if (OPCODE.HALT === opcode) {
       halt = true;
       if (debug) {
         console.log(`${chalk.green.bold('#')}`);
@@ -229,7 +241,8 @@ function runInstruction(debug = false) {
       relativeBase,
       input,
       output: newOutput,
-      halt
+      halt,
+      opcode
     };
   };
 }

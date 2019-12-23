@@ -1,4 +1,5 @@
 const { execute } = require('./execute');
 const { parseProgram } = require('./parse-program');
+const { listen } = require('./listen');
 
-module.exports = { execute, parseProgram };
+module.exports = { listen, execute, parseProgram };

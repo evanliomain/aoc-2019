@@ -1,5 +1,5 @@
 const T = require('taninsam');
-const { patternMatchingWith } = require('../../tools');
+const { patternMatchingWith, parseInteger } = require('../../tools');
 const { SHUFFLE_TECHNIQUE } = require('./tools');
 
 const SHUFFLE_TECHNIQUE_RE = {
@@ -46,7 +46,4 @@ module.exports = function(input) {
 // TODO: move to tools/
 function replace(regexp, replacement) {
   return s => s.replace(regexp, replacement);
-}
-function parseInteger(base = 10) {
-  return n => parseInt(n, base);
 }

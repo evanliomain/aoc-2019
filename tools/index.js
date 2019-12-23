@@ -21,3 +21,4 @@ module.exports.makeMatrix = require('./make-matrix');
 module.exports.findAllMatrix = require('./find-all-matrix');
 module.exports.stringToAscii = require('./string-to-ascii');
 module.exports.asciiToString = require('./ascii-to-string');
+module.exports.parseInteger = require('./parse-integer');
