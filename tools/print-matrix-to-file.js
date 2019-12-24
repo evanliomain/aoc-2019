@@ -10,10 +10,34 @@ module.exports = function printMatrixToFile(printCell) {
     const finalHeight = coeff * height;
     const finalWidth = coeff * width;
 
-    const content = T.chain(matrix)
+    const svg = T.chain(printCell)
+      .chain(T.unless(T.isArray, p => [p]))
+      .chain(T.map(toLayer(matrix)))
+      .chain(
+        mergeLayers({ height: matrix.length, width: matrix[0].length, coeff })
+      )
+      .value();
+
+    fs.mkdirSync('output', { recursive: true });
+    if (printSvg) {
+      await Promise.resolve(svg)
+        .then(svg => fs.writeFileSync(`output/${filename}.svg`, svg))
+        .then(() => matrix);
+    }
+
+    return await svgToPng({ width: finalWidth, height: finalHeight })(svg)
+      .then(png => fs.writeFileSync(`output/${filename}.png`, png))
+      .then(() => matrix);
+  };
+};
+
+function toLayer(matrix) {
+  return printer =>
+    T.chain(matrix)
       .chain(
         mapMatrix((cell, x, y) => {
-          const render = printCell(cell);
+          const render = printer(cell, x, y);
+
           if (T.isNil(render)) {
             return '';
           }
@@ -29,9 +53,9 @@ module.exports = function printMatrixToFile(printCell) {
             if (!T.isNil(render.stroke)) {
               stroke = `stroke="${render.stroke}" stroke-width="0.05"`;
             }
-            let opacity=''
+            let opacity = '';
             if (!T.isNil(render.opacity)) {
-              opacity=`opacity="${render.opacity}"`
+              opacity = `opacity="${render.opacity}"`;
             }
 
             if ('rect' === render.shape) {
@@ -59,7 +83,7 @@ module.exports = function printMatrixToFile(printCell) {
             if ('triangle-up' === render.shape) {
               printed += `<path d="M${x + 0.5},${y} l-0.5,1 h1z"`;
 
-              transform = 'scale(0.8) translate(0.1, 0.1)';
+              // transform = 'scale(0.8) translate(0.1, 0.1)';
             }
             if ('triangle-down' === render.shape) {
               printed += `<path d="M${x + 0.5},${y + 1} l-0.5,-1 h1z"`;
@@ -71,12 +95,29 @@ module.exports = function printMatrixToFile(printCell) {
               printed += `<path d="M${x + 1},${y + 0.5} l-1,0.5 v-1z"`;
             }
 
-            printed += ` fill="${render.fill}"`;
-            printed += ` ${stroke}`;
-            printed += ` ${opacity}`;
-            printed += ' />';
-            opacity="1"
+            if (
+              [
+                'rect',
+                'circle',
+                'triangle-up',
+                'triangle-down',
+                'triangle-left',
+                'triangle-right'
+              ].includes(render.shape)
+            ) {
+              printed += ` fill="${render.fill}"`;
+              printed += ` ${stroke}`;
+              printed += ` ${opacity}`;
+              printed += ' />';
+            }
 
+            if ('text' === render.shape) {
+              printed += `
+                <g transform="translate(${x}, ${y})">
+                  <text x="0"  y="0" fill="${render.fill}" ${opacity} transform="scale(0.07) translate(2, 12)">${render.text}</text>
+                </g>
+              `;
+            }
 
             if ('key' === render.shape) {
               printed += `
@@ -97,23 +138,16 @@ module.exports = function printMatrixToFile(printCell) {
 
             if ('door' === render.shape) {
               printed += `
-              <g transform="translate(${x}, ${y})">
-                <path transform="scale(0.055) translate(-3, -3)"
-                  d="M8 3c-1.11 0-2 .89-2 2v16h12V5c0-1.11-.89-2-2-2H8m0 2h8v14H8V5m5 6v2h2v-2h-2z" fill="${render.fill}" />
-              `;
+                <g transform="translate(${x}, ${y})">
+                  <path transform="scale(0.055) translate(-3, -3)"
+                    d="M8 3c-1.11 0-2 .89-2 2v16h12V5c0-1.11-.89-2-2-2H8m0 2h8v14H8V5m5 6v2h2v-2h-2z" fill="${render.fill}" />
+                `;
 
               if (!T.isNil(render.text)) {
                 printed += `<text x="0"  y="10" fill="${render.fill}" transform="scale(0.025) translate(12, 23)">${render.text}</text>`;
               }
               printed += `</g>`;
             }
-
-            // if (render.shape.startWith('triangle-')) {
-            //   if (!T.isNil(render.scale)) {
-            //     const diff = 1 - render.scale / 2;
-            //     printed += ` transform="scale(${render.scale}) translate(${diff}, ${diff})"`;
-            //   }
-            // }
 
             return printed;
           }
@@ -122,23 +156,22 @@ module.exports = function printMatrixToFile(printCell) {
       .chain(T.map(T.join('\n')))
       .chain(T.join('\n'))
       .value();
+}
 
-    const svg = `
+function mergeLayers({ height, width, coeff }) {
+  return layers => {
+    const finalHeight = coeff * height;
+    const finalWidth = coeff * width;
+
+    return `
       <svg viewBox="0 0 ${width} ${height}" width="${finalWidth}" height="${finalHeight}">
 
         <rect width="${width}" height="${height}" x="0" y="0" fill="black"/>
-        ${content}
+        ${T.chain(layers)
+          .chain(T.map(layer => `<g>${layer}</g>`))
+          .chain(T.join('\n'))
+          .value()}
       </svg>
     `;
-    fs.mkdirSync('output', { recursive: true });
-    if (printSvg) {
-      await Promise.resolve(svg)
-        .then(svg => fs.writeFileSync(`output/${filename}.svg`, svg))
-        .then(() => matrix);
-    }
-
-    return await svgToPng({ width: finalWidth, height: finalHeight })(svg)
-      .then(png => fs.writeFileSync(`output/${filename}.png`, png))
-      .then(() => matrix);
   };
-};
+}
