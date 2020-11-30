@@ -38,7 +38,7 @@ function toLayer(matrix) {
         mapMatrix((cell, x, y) => {
           const render = printer(cell, x, y);
 
-          if (T.isNil(render)) {
+          if (T.isNil(render) || '' === render) {
             return '';
           }
           if (T.isString(render)) {
@@ -65,10 +65,9 @@ function toLayer(matrix) {
                 scale = render.scale;
               }
 
-              const xPos = x + (1 - scale / 2);
-              const yPos = y + (1 - scale / 2);
-
-              printed += `<rect width="${scale}" height="${scale}" x="${x}" y="${y}"`;
+              printed += `<rect width="1" height="1" x="${x}" y="${y}"`;
+              printed += ` transform="scale(${scale}) translate(${x +
+                0.5}, ${y + 0.5})"`;
             }
 
             if ('circle' === render.shape) {

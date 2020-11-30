@@ -6,7 +6,8 @@ const {
   patternMatching,
   mapMatrix,
   printMatrixToFile,
-  replaceAt
+  replaceAt,
+  stringToAscii
 } = require('../../tools');
 const { execute } = require('../../intcode-computer');
 
@@ -201,19 +202,11 @@ function routineToInputs({
   ];
 }
 
-function strToAscii(str) {
-  const result = [];
-  for (let i = 0; i < str.length; i++) {
-    result.push(str[i].charCodeAt());
-  }
-  return result;
-}
-
 function convertToLine() {
   return instructions =>
     T.chain(instructions)
       .chain(T.join(','))
-      .chain(strToAscii)
+      .chain(stringToAscii)
       .chain(T.push(ASCII.NEW_LINE))
       .value();
 }

@@ -6,7 +6,8 @@ const {
   printMatrix,
   patternMatching,
   printMatrixToFile,
-  replace
+  replace,
+  equal
 } = require('../../tools');
 const { stringToAscii, asciiToString } = require('../../tools');
 
@@ -18,73 +19,79 @@ const DROID_COMMAND = {
   NORTH: 'north',
   SOUTH: 'south',
   WEST: 'west',
-  EAST: 'east'
+  EAST: 'east',
+  INVENTORY: 'inv'
 };
 
 // const DIRECTION = { NORTH: 1, SOUTH: 2, WEST: 3, EAST: 4 };
-// const STATUS = {
-//   WALL: 0,
-//   MOVED: 1,
-//   OXYGEN_SYSTEM: 2,
-//   START: 3,
-//   CURRENT: 4,
-//   OXYGEN: 5
-// };
+const STATUS = {
+  START: 'S',
+  OPEN_PASSAGE: '.',
+  OBJECT: 'o',
+  WALL: '#',
+  CURRENT: 'c'
+};
 
-function move(direction) {
-  return ({ space, currentPosition, programState }) => {
-    const nextPosition = getNextPosition(currentPosition, direction);
-
-    const newProgramState = listen(
+function doCommand(command) {
+  return ({ programState }) =>
+    listen(
       programState.program,
-      encodeInstruction()(direction),
+      encodeInstruction()(command),
       {
         instructionPointer: programState.instructionPointer,
         relativeBase: programState.relativeBase
       },
       execOptions
     );
+}
 
+function action(command) {
+  return ({ space, currentPosition, programState, items }) => {
+    const newProgramState = doCommand(command)({ programState });
     const out = parseOutput(newProgramState.output);
-    console.log(out);
 
-    console.log('>' + asciiToString(newProgramState.output).join('') + '<');
+    if (command.startsWith('take')) {
+      items.push(command.replace(/take (.*)/, '$1'));
+    }
+    if (command.startsWith('drop')) {
+      item = command.replace(/drop (.*)/, '$1');
+      items = items.filter(T.not(equal(item)));
+    }
+
     return {
       programState: newProgramState,
       space,
-      currentPosition
+      currentPosition,
+      out,
+      items
     };
+  };
+}
 
-    //   switch (newProgramState.output) {
-    //     case STATUS.WALL:
-    //       return {
-    //         space: { ...space, [positionToRecordKey(nextPosition)]: STATUS.WALL },
-    //         programState: newProgramState,
-    //         currentPosition
-    //       };
-    //     case STATUS.MOVED:
-    //       return {
-    //         space: {
-    //           ...space,
-    //           // [positionToRecordKey(currentPosition)]: STATUS.MOVED,
-    //           [positionToRecordKey(nextPosition)]: STATUS.MOVED
-    //         },
-    //         programState: newProgramState,
-    //         currentPosition: nextPosition
-    //       };
-    //     case STATUS.OXYGEN_SYSTEM:
-    //       return {
-    //         space: {
-    //           ...space,
-    //           [positionToRecordKey(nextPosition)]: STATUS.OXYGEN_SYSTEM
-    //         },
-    //         programState: newProgramState,
-    //         currentPosition: nextPosition
-    //       };
+function move(direction) {
+  return ({ space, currentPosition, programState, items }) => {
+    let nextPosition = getNextPosition(currentPosition, direction);
 
-    //     default:
-    //       throw new Error(`Unreconize status ${newProgramState.output}`);
-    //   }
+    const newProgramState = doCommand(direction)({ programState });
+    const out = parseOutput(newProgramState.output);
+
+    if (out.failed) {
+      nextPosition = currentPosition;
+    }
+
+    // console.log('>' + asciiToString(newProgramState.output).join('') + '<');
+    return {
+      programState: newProgramState,
+      space: {
+        ...space,
+        [positionToRecordKey(nextPosition)]:
+          0 !== out.items.length ? STATUS.OBJECT : STATUS.OPEN_PASSAGE,
+        '0,0': 'S'
+      },
+      currentPosition: nextPosition,
+      out,
+      items
+    };
   };
 }
 
@@ -124,15 +131,15 @@ function writeUserInputs(userInputs) {
 }
 
 function printerConsole() {
-  return state => state;
-  // T.chain(space)
-  //   .chain(recordToMatrix)
-  //   .chain(printConsole)
-  //   .value();
+  return state =>
+    T.chain(state.space)
+      .chain(recordToMatrix)
+      .chain(printConsole)
+      .value();
 }
 
 function printerFile(index) {
-  return async ({ space, currentPosition }) => {
+  return async ({ space, currentPosition, out }) => {
     const record = T.chain(space)
       .chain(s => ({
         ...s,
@@ -189,11 +196,39 @@ function printConsole(matrix) {
 
 function printSpaceToFile(index) {
   return async record =>
-    await printMatrixToFile(cell => ({
-      shape: 'text',
-      fill: 'white',
-      text: cell
-    }))(`24/24-space-${index}`, 20)(record);
+    await printMatrixToFile([
+      cell =>
+        !T.isNil(cell)
+          ? null
+          : {
+              shape: 'text',
+              fill: 'white',
+              background: 'black',
+              text: '?'
+            },
+      cell => (STATUS.WALL !== cell ? null : '#0095a8'),
+      cell =>
+        ![
+          STATUS.OPEN_PASSAGE,
+          STATUS.CURRENT,
+          STATUS.OBJECT,
+          STATUS.START
+        ].includes(cell)
+          ? null
+          : 'white',
+      cell =>
+        STATUS.START !== cell
+          ? null
+          : { shape: 'text', fill: 'green', text: 'S' },
+      cell =>
+        STATUS.OBJECT !== cell
+          ? null
+          : { shape: 'circle', fill: 'blue', scale: 0.5 },
+      cell =>
+        STATUS.CURRENT !== cell
+          ? null
+          : { shape: 'circle', fill: 'red', scale: 0.5 }
+    ])(`24/24-space-${index}`, 20)(record);
 }
 
 function wrap(wrapper) {
@@ -216,13 +251,15 @@ function wrapPrintFile(f) {
 
 function start(savedMap) {
   return program => ({
-    space: { ...savedMap, '0,0': '?' },
+    space: { ...savedMap, '0,0': STATUS.START },
     programState: {
       program,
       instructionPointer: 0,
       relativeBase: 0
     },
-    currentPosition: { x: 0, y: 0 }
+    currentPosition: { x: 0, y: 0 },
+    out: {},
+    items: []
   });
 }
 
@@ -243,19 +280,125 @@ function encodeInstruction() {
 }
 
 function parseOutput(output) {
-  return T.chain(output)
+  let outState = T.chain(output)
     .chain(asciiToString)
     .chain(T.join(''))
-    .chain()
+    .chain(replace(/^\n*/, ''))
+    .chain(replace(/\n*$/, ''))
+    .chain(T.split('\n'))
+    .chain(next => ({ next, all: next }))
     .value();
+
+  console.log(outState.next[0]);
+
+  if (/You can't go that way./.test(outState.next[0])) {
+    return {
+      title: 'Wrong way',
+      description: "You can't go that way.",
+      failed: true,
+      items: [],
+      possibleDirections: [],
+      next: [],
+      all: outState.all
+    };
+  }
+
+  outState = T.chain(outState)
+    .chain(state => ({ ...state, title: state.next[0], ...next(state) }))
+    .chain(state => ({
+      ...state,
+      description: state.next[0],
+      ...next(state)
+    }))
+    .chain(state => ({ ...state, ...next(state) }))
+    .chain(state => ({ ...state, possibleDirections: [] }))
+    .chain(
+      T.loopWhile(
+        state => !T.isNil(state.next[0]) && state.next[0].startsWith('- '),
+        state => ({
+          ...state,
+          possibleDirections: [
+            ...state.possibleDirections,
+            state.next[0].replace('- ', '')
+          ],
+          ...next(state)
+        })
+      )
+    )
+    .value();
+
+  console.log(outState.next[0]);
+  if (/you are ejected back to the checkpoint/.test(outState.next[0])) {
+    console.log(`
+    ${chalk.bold(outState.title)}
+    ${chalk.grey(outState.description)}
+    ${chalk.red.bold(outState.next[0])}
+    `);
+    outState = T.chain(next(outState))
+      .chain(({ next }) => ({ next, failed: true, all: next }))
+      .chain(state => ({ ...state, title: state.next[0], ...next(state) }))
+      .chain(state => ({
+        ...state,
+        description: state.next[0],
+        ...next(state)
+      }))
+      .chain(state => ({ ...state, ...next(state) }))
+      .chain(state => ({ ...state, possibleDirections: [] }))
+      .chain(
+        T.loopWhile(
+          state => !T.isNil(state.next[0]) && state.next[0].startsWith('- '),
+          state => ({
+            ...state,
+            possibleDirections: [
+              ...state.possibleDirections,
+              state.next[0].replace('- ', '')
+            ],
+            ...next(state)
+          })
+        )
+      )
+      .value();
+  }
+
+  return T.chain(outState)
+    .chain(state => ({ ...state, ...next(state) }))
+    .chain(state => ({ ...state, items: [] }))
+    .chain(
+      T.loopWhile(
+        state => !T.isNil(state.next[0]) && state.next[0].startsWith('- '),
+        state => ({
+          ...state,
+          items: [...state.items, state.next[0].replace('- ', '')],
+          ...next(state)
+        })
+      )
+    )
+    .value();
+}
+function next(state) {
+  return { next: state.next.slice(1) };
+}
+
+function printOutput(out) {
+  // ${chalk.bold(out.title)}
+  // ${chalk.grey(out.description)}
+  // ${0 === out.items.length ? '' : 'items: ' + chalk.cyan(out.items.join(', '))}
+
+  // ${out.next.join('\n')}
+  return `
+${out.all.join('\n')}
+${chalk.grey('---------------------------------------------')}
+  `;
 }
 
 module.exports = {
   DROID_COMMAND,
+  action,
   move,
   moves,
   printerConsole,
   printerFile,
+  printOutput,
   saveSpace,
   wrap,
   wrapPrintFile,

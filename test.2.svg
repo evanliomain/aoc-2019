@@ -1,0 +1,110 @@
+<svg viewBox="0 0 5 5" width="1000" height="1000">
+     <rect width="10" height="10" x="0" y="0" fill="black"/>
+     <defs>
+
+     <g id="level.0">
+          <rect width="1" height="1" x="0" y="0" fill="red"/>
+          <rect width="1" height="1" x="1" y="0" fill="red"/>
+          <rect width="1" height="1" x="2" y="0" fill="white"/>
+          <rect width="1" height="1" x="3" y="0" fill="white"/>
+          <rect width="1" height="1" x="4" y="0" fill="red"/>
+          <rect width="1" height="1" x="0" y="1" fill="red"/>
+          <rect width="1" height="1" x="1" y="1" fill="white"/>
+          <rect width="1" height="1" x="2" y="1" fill="red"/>
+          <rect width="1" height="1" x="3" y="1" fill="white"/>
+          <rect width="1" height="1" x="4" y="1" fill="red"/>
+          <rect width="1" height="1" x="0" y="2" fill="red"/>
+          <rect width="1" height="1" x="1" y="2" fill="red"/>
+
+          <rect width="1" height="1" x="3" y="2" fill="red"/>
+          <rect width="1" height="1" x="4" y="2" fill="red"/>
+          <rect width="1" height="1" x="0" y="3" fill="red"/>
+          <rect width="1" height="1" x="1" y="3" fill="red"/>
+          <rect width="1" height="1" x="2" y="3" fill="white"/>
+          <rect width="1" height="1" x="3" y="3" fill="white"/>
+          <rect width="1" height="1" x="4" y="3" fill="red"/>
+          <rect width="1" height="1" x="0" y="4" fill="white"/>
+          <rect width="1" height="1" x="1" y="4" fill="white"/>
+          <rect width="1" height="1" x="2" y="4" fill="white"/>
+          <rect width="1" height="1" x="3" y="4" fill="red"/>
+          <rect width="1" height="1" x="4" y="4" fill="red"/>
+
+          <use
+               transform="scale(0.2)"
+               transform-origin="2.5 2.5"
+               xlink:href="#level.1" x="" y="" />
+
+     </g>
+
+     <g id="level.1">
+          <rect width="1" height="1" x="0" y="0" fill="green"/>
+          <rect width="1" height="1" x="1" y="0" fill="green"/>
+          <rect width="1" height="1" x="2" y="0" fill="white"/>
+          <rect width="1" height="1" x="3" y="0" fill="white"/>
+          <rect width="1" height="1" x="4" y="0" fill="green"/>
+          <rect width="1" height="1" x="0" y="1" fill="green"/>
+          <rect width="1" height="1" x="1" y="1" fill="white"/>
+          <rect width="1" height="1" x="2" y="1" fill="green"/>
+          <rect width="1" height="1" x="3" y="1" fill="white"/>
+          <rect width="1" height="1" x="4" y="1" fill="green"/>
+          <rect width="1" height="1" x="0" y="2" fill="green"/>
+          <rect width="1" height="1" x="1" y="2" fill="green"/>
+
+          <rect width="1" height="1" x="3" y="2" fill="green"/>
+          <rect width="1" height="1" x="4" y="2" fill="green"/>
+          <rect width="1" height="1" x="0" y="3" fill="green"/>
+          <rect width="1" height="1" x="1" y="3" fill="green"/>
+          <rect width="1" height="1" x="2" y="3" fill="white"/>
+          <rect width="1" height="1" x="3" y="3" fill="white"/>
+          <rect width="1" height="1" x="4" y="3" fill="green"/>
+          <rect width="1" height="1" x="0" y="4" fill="white"/>
+          <rect width="1" height="1" x="1" y="4" fill="white"/>
+          <rect width="1" height="1" x="2" y="4" fill="white"/>
+          <rect width="1" height="1" x="3" y="4" fill="green"/>
+          <rect width="1" height="1" x="4" y="4" fill="green"/>
+
+          <use
+               transform="scale(0.2)"
+               transform-origin="2.5 2.5"
+               xlink:href="#level.2" x="" y="" />
+     </g>
+
+
+     <g id="level.2">
+          <rect width="1" height="1" x="0" y="0" fill="blue"/>
+          <rect width="1" height="1" x="1" y="0" fill="blue"/>
+          <rect width="1" height="1" x="2" y="0" fill="white"/>
+          <rect width="1" height="1" x="3" y="0" fill="white"/>
+          <rect width="1" height="1" x="4" y="0" fill="blue"/>
+          <rect width="1" height="1" x="0" y="1" fill="blue"/>
+          <rect width="1" height="1" x="1" y="1" fill="white"/>
+          <rect width="1" height="1" x="2" y="1" fill="blue"/>
+          <rect width="1" height="1" x="3" y="1" fill="white"/>
+          <rect width="1" height="1" x="4" y="1" fill="blue"/>
+          <rect width="1" height="1" x="0" y="2" fill="blue"/>
+          <rect width="1" height="1" x="1" y="2" fill="blue"/>
+
+          <rect width="1" height="1" x="3" y="2" fill="blue"/>
+          <rect width="1" height="1" x="4" y="2" fill="blue"/>
+          <rect width="1" height="1" x="0" y="3" fill="blue"/>
+          <rect width="1" height="1" x="1" y="3" fill="blue"/>
+          <rect width="1" height="1" x="2" y="3" fill="white"/>
+          <rect width="1" height="1" x="3" y="3" fill="white"/>
+          <rect width="1" height="1" x="4" y="3" fill="blue"/>
+          <rect width="1" height="1" x="0" y="4" fill="white"/>
+          <rect width="1" height="1" x="1" y="4" fill="white"/>
+          <rect width="1" height="1" x="2" y="4" fill="white"/>
+          <rect width="1" height="1" x="3" y="4" fill="blue"/>
+          <rect width="1" height="1" x="4" y="4" fill="blue"/>
+     </g>
+     </defs>
+
+
+     <use
+     xlink:href="#level.0" x="" y="" />
+<!--
+     <use
+     transform="scale(0.2)"
+     transform-origin="2.5 2.5"
+     xlink:href="#level.1" x="" y="" /> -->
+</svg>

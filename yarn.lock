@@ -2754,6 +2754,11 @@ jest@^24.9.0:
     import-local "^2.0.0"
     jest-cli "^24.9.0"
 
+js-graph-algorithms@^1.0.18:
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/js-graph-algorithms/-/js-graph-algorithms-1.0.18.tgz#f96ec87bf194f5c0a31365fa0e1d07b7b962d891"
+  integrity sha1-+W7Ie/GU9cCjE2X6Dh0Ht7li2JE=
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"

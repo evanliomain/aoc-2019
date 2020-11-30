@@ -1,4 +1,5 @@
 const T = require('taninsam');
+const chalk = require('chalk');
 
 const spaceMap = require('../../output/24-space-map.json');
 const userInputs = require('../../output/24-user-inputs.json');
@@ -6,9 +7,12 @@ const userInputs = require('../../output/24-user-inputs.json');
 const {
   DROID_COMMAND,
   move,
+  action,
   moves,
   start,
   printerConsole,
+  printOutput,
+  printSpaceToFile,
   getRecordValue,
   getNextPosition,
   saveSpace,
@@ -17,13 +21,28 @@ const {
   writeUserInputs
 } = require('./tools');
 
-const USER_COMMAND = { NORTH: 'z', SOUTH: 's', WEST: 'q', EAST: 'd' };
+const { replace, parseInteger, equal } = require('../../tools');
+
+const USER_COMMAND = {
+  NORTH: 'z',
+  SOUTH: 's',
+  WEST: 'q',
+  EAST: 'd',
+  INVENTORY: 'i'
+};
+const DROID_DIRECTION_TO_USER_COMMAND = {
+  [DROID_COMMAND.NORTH]: USER_COMMAND.NORTH,
+  [DROID_COMMAND.SOUTH]: USER_COMMAND.SOUTH,
+  [DROID_COMMAND.WEST]: USER_COMMAND.WEST,
+  [DROID_COMMAND.EAST]: USER_COMMAND.EAST
+};
 
 const USER_TO_DROID_COMMAND = {
   [USER_COMMAND.NORTH]: DROID_COMMAND.NORTH,
   [USER_COMMAND.SOUTH]: DROID_COMMAND.SOUTH,
   [USER_COMMAND.WEST]: DROID_COMMAND.WEST,
-  [USER_COMMAND.EAST]: DROID_COMMAND.EAST
+  [USER_COMMAND.EAST]: DROID_COMMAND.EAST,
+  [USER_COMMAND.INVENTORY]: DROID_COMMAND.INVENTORY
 };
 
 module.exports = async function(program) {
@@ -58,47 +77,129 @@ async function manual(state) {
 
   while (true) {
     // console.log(printerConsole()(state));
-    // saveSpace(state);
+    saveSpace(state);
+    await printerFile('current')(state);
     state = await userDeplacement(state);
   }
 }
 
 async function userDeplacement(state) {
-  const direction = await askDirection();
+  if (T.isNil(state) || T.isNil(state.out)) {
+    throw new Error(`Need program output to continue`);
+  }
+  console.log(printOutput(state.out));
+  const direction = await askDirection(state).then(action => {
+    console.log(`> ${action}`);
+    return action;
+  });
   userInputs.push(direction);
   writeUserInputs(userInputs);
+
+  if (
+    /^take/.test(direction) ||
+    /^drop/.test(direction) ||
+    /^inv/.test(direction)
+  ) {
+    return action(direction)(state);
+  }
+
   return move(direction)(state);
 }
 
-async function askDirection() {
+async function askDirection(state) {
   return new Promise(function(resolve, reject) {
     // Set input character encoding.
     process.stdin.setEncoding('utf-8');
 
     // Prompt user to input data in console.
+    const askSentence = T.chain(state.out.possibleDirections)
+      .chain(
+        T.map(
+          direction =>
+            `${chalk.green(direction)}: ${chalk.magenta(
+              DROID_DIRECTION_TO_USER_COMMAND[direction]
+            )}`
+        )
+      )
+      .chain(T.join(', '))
+      .chain(s => `Where do you wanna go ? (${s})`)
+      .value();
+
+    const askChoice = T.chain(state.out.items)
+      .chain(
+        T.map(
+          (item, i) =>
+            `${chalk.cyan(item)}: ${
+              0 === i ? chalk.magenta('m') : chalk.magenta(i)
+            }`
+        )
+      )
+      .chain(T.join(', '))
+      .chain(s => ('' === s ? '' : `Do you wanna take? (${s})`))
+      .value();
+
+    const askDrop = T.chain(state.items)
+      .chain(
+        T.map(
+          (item, i) =>
+            `${chalk.cyan(item)}: ${
+              0 === i ? chalk.magenta('p') : chalk.magenta('p' + i)
+            }`
+        )
+      )
+      .chain(T.join(', '))
+      .chain(s => ('' === s ? '' : `Do you wanna drop? (${s})`))
+      .value();
+
     console.log(
-      'Where do you wanna go ? (north: z, west: q, south: s, east: d)'
+      T.chain([
+        askSentence,
+        askChoice,
+        askDrop,
+        `Do you wanna check inventory? (${chalk.magenta('i')})`
+      ])
+        .chain(T.filter(T.not(equal(''))))
+        .chain(T.join('\n'))
+        .value()
     );
 
     // When user input data and click enter key.
     process.stdin.on('data', async function(data) {
-      if (`${USER_COMMAND.EAST}\n` === data.toLowerCase()) {
-        resolve(DROID_COMMAND.EAST);
+      // console.log(`>${data}<`);
+
+      const response = data.toLowerCase().replace('\n', '');
+      if ('m' === response) {
+        resolve(`take ${state.out.items[0]}`);
         return;
       }
-      if (`${USER_COMMAND.WEST}\n` === data.toLowerCase()) {
-        resolve(DROID_COMMAND.WEST);
+      if (!isNaN(parseInt(response, 10))) {
+        resolve(
+          T.chain(response)
+            .chain(parseInteger())
+            .chain(i => state.out.items[i])
+            .chain(item => `take ${item}`)
+            .value()
+        );
         return;
       }
-      if (`${USER_COMMAND.NORTH}\n` === data.toLowerCase()) {
-        resolve(DROID_COMMAND.NORTH);
+      if ('p' === response) {
+        resolve(`drop ${state.items[0]}`);
         return;
       }
-      if (`${USER_COMMAND.SOUTH}\n` === data.toLowerCase()) {
-        resolve(DROID_COMMAND.SOUTH);
+      if (response.startsWith('p')) {
+        resolve(
+          T.chain(response)
+            .chain(replace(/p/, ''))
+            .chain(parseInteger())
+            .chain(i => state.items[i])
+            .chain(item => `drop ${item}`)
+            .value()
+        );
         return;
       }
-      resolve(DROID_COMMAND.WEST);
+
+      resolve(USER_TO_DROID_COMMAND[response]);
+      return;
     });
   });
 }
